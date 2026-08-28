@@ -145,6 +145,15 @@ Persistent agent identity layer — `brain-state.json`, `Claude-Brain/BRAIN.md`
 ### ✅ Phase 7b: Copilot (Active)
 GitHub Copilot CLI — code review and repo operations
 
+### ✅ Phase 8: Hardening (Active)
+Debian 13 security baseline — Docker resource limits, Caddy security headers, filesystem permissions
+
+### ✅ Phase 9: Tor Onion Service (Active)
+Hidden service for orchestrator — onion routing, stream isolation, SOCKS proxy
+
+### ✅ Phase 10: Toxin Integration (Active)
+Android prototype connected via ADB reverse port forwarding + Tor onion
+
 ---
 
 ## Project Structure
@@ -190,6 +199,8 @@ symbiote-os/
 | Nextcloud | http://localhost:8090 |
 | MariaDB | localhost:3306 (Docker network) |
 | Tor SOCKS | localhost:9050 |
+| Tor Onion | onion address hidden (security) |
+| Toxin AVD | 127.0.0.1:3030-8090 (via ADB reverse) |
 
 ---
 
