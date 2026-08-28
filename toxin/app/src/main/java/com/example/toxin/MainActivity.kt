@@ -63,7 +63,6 @@ class MainActivity : Activity() {
      * Build formatted display showing temporal state of all components
      */
     private fun buildTemporalDisplay(tracker: ComponentStateTracker): String {
-        val components = tracker.getComponentTracker()  // Get details
         val header = """
 ╔═══════════════════════════════════════════════════════╗
 ║     Symbiote Toxin — Temporal Status Dashboard       ║
@@ -91,8 +90,3 @@ class MainActivity : Activity() {
         handler.removeCallbacksAndMessages(null)
     }
 }
-
-/**
- * Extension function for accessing component tracker
- */
-fun ComponentStateTracker.getComponentTracker(): ComponentStateTracker = this

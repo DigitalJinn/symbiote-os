@@ -103,10 +103,12 @@ data class ComponentState(
 
 /**
  * Tracks all component states and provides query interface
+ * Thread-safe operations on component state
  */
 class ComponentStateTracker {
     private val states = mutableMapOf<String, ComponentState>()
     private val stateHistory = mutableListOf<Pair<Instant, String>>()  // For audit
+    private val lock = Any()  // Synchronization lock for thread safety
 
     /**
      * Initialize tracking for a component
@@ -275,6 +277,92 @@ $componentsList
   "error_components": ${getErrorComponents().let { if (it.isEmpty()) "[]" else "\"${it.joinToString(", ")}\"" }},
   "initializing_components": ${getInitializingComponents().let { if (it.isEmpty()) "[]" else "\"${it.joinToString(", ")}\"" }}
 }"""
+    }
+
+    /**
+     * Generate temporal logic constraints for Phage (LLM) layer
+     * Provides decidable constraints for AI agent decision-making
+     */
+    fun getTemporalConstraintsForLLM(): String {
+        synchronized(lock) {
+            val constraints = mutableListOf<String>()
+            
+            for ((name, state) in states) {
+                val deadline = state.startTime.plus(state.expectedDuration)
+                val timeRemaining = state.timeRemaining.seconds
+                
+                constraints.add("""
+                    COMPONENT: $name
+                    STATUS: ${state.status}
+                    DEADLINE: $deadline
+                    TIME_REMAINING_SECONDS: $timeRemaining
+                    IS_OVERDUE: ${state.isOverdue}
+                    BOUNDED_CONSTRAINT: All operations must complete within ${state.expectedDuration.seconds}s from start
+                """.trimIndent())
+            }
+            
+            return "TEMPORAL_LOGIC_CONSTRAINTS {\n" + 
+                   constraints.joinToString("\n---\n") + 
+                   "\n}"
+        }
+    }
+
+    /**
+     * Get decidable predicates for Carnage (ACL) security layer
+     * Ensures all access control decisions are formally decidable
+     */
+    fun getDecidablePredicates(): String {
+        synchronized(lock) {
+            val predicates = mutableListOf<String>()
+            
+            for ((name, state) in states) {
+                val isHealthy = state.status in listOf(
+                    ComponentStatus.ACTIVE, 
+                    ComponentStatus.RESOLVED
+                )
+                val isDead = state.status == ComponentStatus.ERROR
+                val isUnderway = state.status == ComponentStatus.INITIALIZING
+                
+                predicates.add("""
+                    DECIDABLE($name): {
+                      healthy($name) ≡ $isHealthy
+                      failed($name) ≡ $isDead
+                      initializing($name) ≡ $isUnderway
+                      overdue($name) ≡ ${state.isOverdue}
+                    }
+                """.trimIndent())
+            }
+            
+            return "DECIDABLE_PREDICATES {\n" + 
+                   predicates.joinToString("\n") + 
+                   "\n}"
+        }
+    }
+
+    /**
+     * Thread-safe initialization wrapper
+     */
+    fun initializeComponentSafe(
+        name: String,
+        expectedDurationSeconds: Long = 60
+    ) {
+        synchronized(lock) {
+            initializeComponent(name, expectedDurationSeconds)
+        }
+    }
+
+    /**
+     * Thread-safe status update wrapper
+     */
+    fun updateStatusSafe(
+        name: String,
+        newStatus: ComponentStatus,
+        error: String? = null,
+        message: String? = null
+    ) {
+        synchronized(lock) {
+            updateStatus(name, newStatus, error, message)
+        }
     }
 }
 
