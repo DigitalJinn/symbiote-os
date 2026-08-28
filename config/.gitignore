@@ -1,0 +1,11 @@
+# Docker container internal data - do not commit
+config/caddy_data/
+config/caddy_config/
+config/nextcloud_db/mysql/
+config/nextcloud_data/
+config/n8n_data/database.sqlite
+config/n8n_data/database.sqlite-shm
+config/n8n_data/database.sqlite-wal
+*.log
+crash.journal
+config

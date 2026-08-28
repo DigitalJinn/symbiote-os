@@ -1,0 +1,27 @@
+# Caddy Configuration for Symbiote-OS
+# Local-only access (127.0.0.1) — no public exposure without Twingate
+
+# Main reverse proxy
+:80, :443 {
+    # n8n workflow engine
+    handle_path /n8n/* {
+        reverse_proxy n8n:5678
+    }
+    
+    # Nextcloud (container on port 8090 internally, proxied to avoid llama.cpp conflict on 8080)
+    handle_path /nc/* {
+        reverse_proxy nextcloud:80
+    }
+    
+    # Orchestrator (native host, not in Docker)
+    handle_path /api/* {
+        reverse_proxy host.docker.internal:3030
+    }
+    
+    # llama.cpp (native host service on port 8080)
+    handle_path /llm/* {
+        reverse_proxy host.docker.internal:8080
+    }
+    
+    file_server
+}

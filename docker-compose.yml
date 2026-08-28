@@ -1,0 +1,83 @@
+version: '3.8'
+
+networks:
+  symbiote_net:
+    driver: bridge
+
+services:
+  # Zero-Overhead Edge Router
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:443"
+    volumes:
+      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./config/caddy_data:/data
+      - ./config/caddy_config:/config
+    networks:
+      - symbiote_net
+    command: caddy run --config /etc/caddy/Caddyfile
+
+  # AI Agent Workflow Engine
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD:-symbiote}
+      - WEBHOOK_URL=http://localhost:5678
+      - DB_TYPE=sqlite
+      - EXECUTIONS_PROCESS=main
+      - N8N_ENFORCE_TRUST_PROXY_HEADER=true
+    volumes:
+      - ./config/n8n_data:/home/node/.n8n
+    networks:
+      - symbiote_net
+    depends_on:
+      - caddy
+
+  # Self-Hosted Cloud (Storage + Calendar)
+  nextcloud:
+    image: nextcloud:28-apache
+    container_name: nextcloud
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8090:80"
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-ChangeMeNextcloud123!}
+      - TRUSTED_DOMAINS=localhost 127.0.0.1
+    volumes:
+      - ./config/nextcloud_data:/var/www/html
+      - ./workspace:/var/www/html/workspace
+    networks:
+      - symbiote_net
+    depends_on:
+      - db
+
+  # Database for Nextcloud
+  db:
+    image: mariadb:11
+    container_name: nextcloud_db
+    restart: unless-stopped
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-format=Barracuda
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-ChangeMeRoot123!}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-ChangeMeNextcloud123!}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+    volumes:
+      - ./config/nextcloud_db/mysql:/var/lib/mysql
+    networks:
+      - symbiote_net

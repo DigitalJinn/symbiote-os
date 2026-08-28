@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useStore } from './store'
+import LlamaTab from './LlamaTab'
 import HiveTab from './HiveTab'
 import ChatsTab from './ChatsTab'
 import CarnageTab from './CarnageTab'
 import RoadmapTab from './RoadmapTab'
-import OllamaTab from './OllamaTab'
 
 export default function App() {
   const { activeTab, setActiveTab, fetchAll, health } = useStore()
@@ -20,7 +20,7 @@ export default function App() {
     { id: 'chats', label: 'Chats' },
     { id: 'carnage', label: 'Carnage' },
     { id: 'roadmap', label: 'Roadmap' },
-    { id: 'ollama', label: 'Ollama' },
+    { id: 'llama', label: 'llama.cpp' },
   ]
 
   const renderTab = () => {
@@ -29,7 +29,7 @@ export default function App() {
       case 'chats': return <ChatsTab />
       case 'carnage': return <CarnageTab />
       case 'roadmap': return <RoadmapTab />
-      case 'ollama': return <OllamaTab />
+      case 'llama': return <LlamaTab />
       default: return <HiveTab />
     }
   }

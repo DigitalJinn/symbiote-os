@@ -1,6 +1,7 @@
 // Symbiote-OS Orchestrator (Venom)
-// Phase 1–5 — minimal functional implementation
+// Phase 1–7 — minimal functional implementation
 // Serves: health check, Hive metadata, chat routing, Carnage audit logging
+// Venom Revamp: llama.cpp replaces Ollama (host service on port 8080)
 
 import express from 'express';
 import http from 'http';
@@ -19,6 +20,7 @@ dotenv.config({ path: path.resolve(process.env.ENV_PATH || '.env') });
 const PORT = process.env.ORCHESTRATOR_PORT || 3030;
 const HOST = process.env.ORCHESTRATOR_HOST || 'localhost';
 const HIVE_ROOT = process.env.SYMBIOTE_HIVE_ROOT || path.join(process.env.HOME, '.symbiote-brain');
+const LLAMACPP_URL = process.env.LLAMACPP_URL || 'http://localhost:8080';
 
 // ─── Carnage ACL: Initialize with Symbiote policies ─────────────────
 // Enforces Business-Private cage isolation (hermes uid 996 blocked)
@@ -36,13 +38,22 @@ app.use(express.urlencoded({ extended: true }));
 
 // ─── Routes ───────────────────────────────────────────────────────────
 
-// Health check
-app.get('/api/health', (req, res) => {
+// Health check — includes llama.cpp status
+app.get('/api/health', async (req, res) => {
+  let llamaStatus = 'disconnected';
+  try {
+    const r = await fetch(`${LLAMACPP_URL}/health`);
+    llamaStatus = r.ok ? 'ok' : 'degraded';
+  } catch {
+    llamaStatus = 'disconnected';
+  }
+
   res.json({
     status: 'ok',
     service: 'symbiote-orchestrator',
     uptime: process.uptime(),
     hive: HIVE_ROOT,
+    llama_cpp: llamaStatus,
     timestamp: new Date().toISOString()
   });
 });
@@ -51,14 +62,16 @@ app.get('/api/health', (req, res) => {
 app.get('/api/info', (req, res) => {
   res.json({
     name: 'symbiote-orchestrator',
-    version: '0.1.0',
+    version: '0.2.0',
     description: 'Local-first agentic hub for Venom (Debian 13)',
-    phase: 'Phase 1–5 in progress',
+    phase: 'Phase 1–7 active',
     components: ['venom', 'tendril', 'toxin'],
-    clis: ['hermes', 'codex', 'ollama', 'openai', 'grok'],
+    clis: ['hermes', 'codex', 'copilot', 'openai'],
+    backends: ['llama.cpp (Qwen2.5-3B-Instruct Q4_0)'],
     hive_root: HIVE_ROOT,
-    orchesterator_port: PORT,
-    frontend_port: 5173
+    orchestrator_port: PORT,
+    frontend_port: 5173,
+    llama_cpp_url: LLAMACPP_URL
   });
 });
 
@@ -195,14 +208,40 @@ app.get('/api/carnage', async (req, res) => {
   }
 });
 
-// Ollama proxy
-app.get('/api/ollama/tags', async (req, res) => {
+// llama.cpp proxy — chat completion endpoint
+app.post('/api/llm/chat', async (req, res) => {
   try {
-    const response = await fetch('http://localhost:11434/api/tags');
+    const response = await fetch(`${LLAMACPP_URL}/v1/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body)
+    });
     const data = await response.json();
     res.json(data);
   } catch (err) {
-    res.status(502).json({ error: 'Ollama not reachable' });
+    res.status(502).json({ error: 'llama.cpp not reachable', detail: err.message });
+  }
+});
+
+// llama.cpp models endpoint
+app.get('/api/llm/models', async (req, res) => {
+  try {
+    const response = await fetch(`${LLAMACPP_URL}/v1/models`);
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    res.status(502).json({ error: 'llama.cpp not reachable' });
+  }
+});
+
+// llama.cpp health
+app.get('/api/llm/health', async (req, res) => {
+  try {
+    const response = await fetch(`${LLAMACPP_URL}/health`);
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    res.status(502).json({ error: 'llama.cpp not reachable', detail: err.message });
   }
 });
 
@@ -231,11 +270,11 @@ server.listen(PORT, HOST, () => {
   console.log(chalk.gray(`  ${new Date().toISOString()}`));
   console.log(chalk.blue(`  Orchestrator: http://${HOST}:${PORT}`));
   console.log(chalk.blue(`  Frontend:     http://localhost:5173`));
-  console.log(chalk.blue(`  Ollama:       http://localhost:11434`));
+  console.log(chalk.blue(`  llama.cpp:    ${LLAMACPP_URL} (host service)`));
   console.log(chalk.blue(`  Hive:         ${HIVE_ROOT}`));
   console.log();
   console.log(chalk.gray('  Endpoints:'));
-  console.log(chalk.gray('    GET  /api/health       — health check'));
+  console.log(chalk.gray('    GET  /api/health       — health check (includes llama.cpp)'));
   console.log(chalk.gray('    GET  /api/info         — orchestrator info'));
   console.log(chalk.gray('    GET  /api/hive         — Hive cage structure'));
   console.log(chalk.gray('    GET  /api/hive/:path   — read file from Hive (ACL-enforced)'));
@@ -245,7 +284,9 @@ server.listen(PORT, HOST, () => {
   console.log(chalk.gray('    GET  /api/chats        — chat history'));
   console.log(chalk.gray('    POST /api/chats        — save chat entry'));
   console.log(chalk.gray('    GET  /api/carnage      — audit log'));
-  console.log(chalk.gray('    GET  /api/ollama/tags  — proxied Ollama'));
+  console.log(chalk.gray('    GET  /api/llm/health   — llama.cpp health'));
+  console.log(chalk.gray('    GET  /api/llm/models   — llama.cpp models'));
+  console.log(chalk.gray('    POST /api/llm/chat     — llama.cpp chat (proxied)'));
   console.log();
   console.log(chalk.green('  🔒 Carnage ACL initialized — Business-Private cage enforced'));
   console.log();

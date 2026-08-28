@@ -1,10 +1,10 @@
 # Symbiote-OS
 
-> Local-first, portable agentic operating system.  
-> **Venom** (Debian 13 SSD) + **Tendril** (Tor) + **Toxin** (Android + microG).  
-> **CLIs:** Hermes + Codex + Copilot + Ollama + OpenAI API. (Grok retired, ProtonVPN → Twingate.)
+> Local-first, portable agentic operating system.
+> **Venom** (Debian 13 SSD) + **Tendril** (Tor) + **Toxin** (Android + microG).
+> **CLIs:** Hermes + Codex + Copilot + OpenAI API. (Model runtime: llama.cpp on host.)
 
-**Status:** Phase 1–7 active. Venom portable SSD ready. Tendril (Tor onion service) integrated. Toxin prototype scaffolded. Soul identity layer designed. Copilot CLI active as 4th brain.
+**Status:** Phase 1–7 active. Venom portable SSD ready. Tendril (Tor onion service) integrated. Toxin prototype scaffolded. Soul identity layer designed. Copilot CLI active.
 
 ---
 
@@ -13,12 +13,12 @@
 **Symbiote OS** is a privacy-first, portable brain you can carry on a USB SSD and boot on any UEFI laptop. It consists of:
 
 - **Venom** (SSD brain) — Debian 13 + Hyprland, portable across machines
-- **Eddie** (host body) — Surface Pro 4 or any UEFI laptop
-- **The Hive** — 3-cage vault (Life-OS / Business-Private / Claude-Brain), synced via MEGA
+- **Eddie** (host body) — Any UEFI laptop
+- **The Hive** — 3-cage vault (Life-OS / Business-Private / Claude-Brain), synced via cloud storage
 - **Carnage** — ACL enforcement + PII redaction + audit logging
-- **Phage** — LLM layer (Ollama local + OpenAI/Nous cloud)
+- **Phage** — LLM layer (llama.cpp local + cloud providers)
 - **Tendril** — Tor onion service + OTG amnesic jump-box (Tails/LiveOS)
-- **Toxin** — Mobile spawn (Android + microG, prototype in Android Studio)
+- **Toxin** — Mobile spawn (Android + microG, prototype)
 - **Soul** — Persistent agent identity layer (cross-surface continuity)
 - **Copilot** — GitHub Copilot CLI (4th brain, code review + repo ops)
 
@@ -58,10 +58,10 @@ Follow the three master build guides:
 
 ```
 ┌─────────────────────────────────────┐
-│   Surface Pro 4 (Eddie)             │  Temporary host
+│   Host Machine (Eddie)              │  Temporary host
 │  ┌─────────────────────────────┐  │
 │  │ Venom (SSD)                 │  │  Debian 13 + Hyprland
-│  │ • Orchestrator (:3030)      │  │  Hermes, Codex, Copilot, Ollama
+│  │ • Orchestrator (:3030)      │  │  Hermes, Codex, Copilot
 │  │ • The Hive (3 cages)        │  │  Carnage, Tendril, Soul
 │  │ • Carnage ACL               │  │
 │  │ • Soul (identity)           │  │
@@ -75,7 +75,7 @@ Follow the three master build guides:
 ┌───▼──────────┐   ┌─────▼──────────┐
 │ OTG Tails    │   │  Toxin Phone   │
 │ (jump-box)   │   │  (Android)     │
-│ USB-C OTG    │   │  Prototype NOW │
+│ USB-C OTG    │   │  Prototype     │
 │ Amnesic      │   │  microG +      │
 │ Tendril      │   │  Syncthing     │
 └──────────────┘   └────────────────┘
@@ -88,9 +88,9 @@ Follow the three master build guides:
 | Brain | CLI | Role | Status |
 |---|---|---|---|
 | **Hermes** | v0.20.4 | Chief-of-staff reasoning (primary agent) | ✅ Ready |
-| **Codex** | v0.148.0 | Code execution (implements Hermes designs) | ✅ Ready |
-| **Copilot** | v1.0.80 | Code review + repo ops (4th brain, ACP server) | ✅ Active |
-| **Phage** | Ollama v0.32.14 | Local inference (5 models) | ✅ Ready |
+| **Codex** | latest | Code execution (implements Hermes designs) | ✅ Ready |
+| **Copilot** | latest | Code review + repo ops (4th brain) | ✅ Active |
+| **Phage** | llama.cpp | Local inference (Qwen2.5-3B Q4_0) | ✅ Ready |
 
 ### Workflow: Design → Implement → Review
 
@@ -98,7 +98,7 @@ Follow the three master build guides:
 2. **Hermes** — designs solution, outputs architecture doc
 3. **Codex** — receives design, implements in code
 4. **Copilot** — code review, PR creation, suggestions (via ACP or CLI)
-5. **All → Hive** — saved to `~/.symbiote-brain/`, synced via MEGA
+5. **All → Hive** — saved to `~/.symbiote-brain/`, synced via cloud storage
 
 Example: `"Build Python script to sync vault to S3"`
 → Hermes designs (config, error handling, logging)
@@ -112,10 +112,7 @@ Example: `"Build Python script to sync vault to S3"`
 | Model | Provider | Purpose |
 |---|---|---|
 | `poolside/laguna-s-2.1:free` | Nous Research | Primary reasoning (via Hermes) |
-| `hermes3:8b` | Ollama (local) | Main local reasoning |
-| `qwen2.5-coder:1.5b` | Ollama (local) | Quick coding tasks |
-| `phi4-mini:latest` | Ollama (local) | Fast Q&A |
-| `llama3.2:3b` | Ollama (local) | General purpose |
+| `Qwen2.5-3B-Instruct-Q4_0` | llama.cpp (host) | Local inference (systemd service on :8080) |
 | `gpt-4o` | OpenAI (cloud) | Cloud reasoning |
 
 **Fallback chain:** Nous → OpenRouter (Claude Sonnet) → Z.ai (GLM-4.5)
@@ -128,13 +125,13 @@ Example: `"Build Python script to sync vault to S3"`
 Portable Debian 13 SSD + Hyprland desktop + all CLIs
 
 ### ✅ Phase 2: Hive (Active)
-3-cage vault structure + MEGA sync
+3-cage vault structure + cloud sync
 
 ### ✅ Phase 3: Carnage (Active)
 OS-level ACL + PII redaction + audit logging
 
 ### ✅ Phase 4: Phage (Active)
-Ollama 5 local models + Nous Research + OpenAI cloud
+llama.cpp (Qwen2.5-3B) as host systemd service + Nous Research + OpenAI cloud
 
 ### ✅ Phase 5: Tendril (Ready)
 Tor onion service + Tails OTG jump-box
@@ -146,7 +143,7 @@ Android Studio + microG AVD + Syncthing sync
 Persistent agent identity layer — `brain-state.json`, `Claude-Brain/BRAIN.md`
 
 ### ✅ Phase 7b: Copilot (Active)
-GitHub Copilot CLI v1.0.80 — logged in as `MaliceHermes`
+GitHub Copilot CLI — code review and repo operations
 
 ---
 
@@ -158,6 +155,8 @@ symbiote-os/
 ├── start.sh                    # Start orchestrator + frontend
 ├── stop.sh                     # Stop all services
 ├── AGENTS.md                   # Project guide for Copilot/Hermes/Codex
+├── docker-compose.yml          # Docker stack (Caddy, n8n, Nextcloud, MariaDB)
+├── .env                        # Environment file (NOT committed to git)
 ├── frontend/                   # React + Vite + Tailwind UI
 │   ├── App.jsx                 # Main app (Hive/Carnage/Phage/Roadmap tabs)
 │   └── src/                    # Component source
@@ -165,12 +164,14 @@ symbiote-os/
 │   ├── carnage-acl.js          # ACL enforcement + PII redaction
 │   ├── temporal-prompt.js      # Temporal logic prompt engine
 │   └── index.js                # Main server
+├── config/                     # Service configs (Caddy, n8n, Nextcloud)
+│   ├── caddy/Caddyfile         # Reverse proxy routes
+│   └── n8n_data/               # n8n workflows + credentials
 ├── toxin/                      # Android app (microG + Syncthing)
 │   ├── app/                    # Main Android app source
-│   ├── base44-toxin-prompt.md  # Android-specific system prompt
 │   └── setup scripts           # microG, F-Droid, Aurora Store
 ├── tendril/                    # Tor + OTG jump-box
-└── wiki/                       # Knowledge base (synced from MEGA)
+└── wiki/                       # Knowledge base (synced from cloud storage)
     ├── 01-Architecture/        # Venom, Hive, Carnage, Phage, Soul
     └── 02-Components/          # Tendril, Toxin, AgentMail, Open Notebook
 ```
@@ -183,11 +184,12 @@ symbiote-os/
 |---|---|
 | Orchestrator | http://localhost:3030 |
 | Frontend | http://localhost:5173 |
-| Ollama | http://localhost:11434 |
-| Open Notebook | http://localhost:8502 |
-| Open Notebook API | http://localhost:5055 |
-| SurrealDB | http://localhost:8000 |
-| Tor Onion | `7oshsadnhldnwmtlw2xyelie4tl2apngpr45rd53ms5xa4kclnof24id.onion:3030` |
+| llama.cpp | http://localhost:8080/v1 |
+| Caddy (reverse proxy) | http://localhost:80 |
+| n8n (workflow engine) | http://localhost:5678 |
+| Nextcloud | http://localhost:8090 |
+| MariaDB | localhost:3306 (Docker network) |
+| Tor SOCKS | localhost:9050 |
 
 ---
 
@@ -196,21 +198,24 @@ symbiote-os/
 ```bash
 # .env (NOT committed to git)
 ORCHESTRATOR_PORT=3030
-OPENAI_API_KEY=sk-...
 SYMBIOTE_HIVE_ROOT=~/.symbiote-brain
 JARVIS_PROJECTS_ROOT=~/projects
+N8N_BASIC_AUTH_PASSWORD=symbiote
+MYSQL_PASSWORD=ChangeMeNextcloud123!
+MYSQL_DATABASE=nextcloud
+MYSQL_USER=nextcloud
 ```
 
 ---
 
 ## Security
 
-- **Carnage ACL:** Business-Private locked at OS level (hermes user uid 996 blocked)
+- **Carnage ACL:** Business-Private cage locked at OS level
 - **PII Redaction:** SSN, phone, email, address auto-stripped before handoff
 - **Audit Logging:** Every redaction stamped with SHA256, logged to `.carnage_audit.log`
 - **Tor Encryption:** Venom ↔ Tendril ↔ Toxin all via Tor onion service
-- **Amnesic Jump-Box:** Tails/LiveOS leaves no trace on Surface Pro 4
-- **No Secrets in Git:** API keys, .onion addresses, Tor keys never committed
+- **Amnesic Jump-Box:** Tails/LiveOS leaves no trace on host
+- **No Secrets in Git:** API keys, service addresses, credentials never committed
 
 ---
 

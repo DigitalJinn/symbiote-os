@@ -1,0 +1,196 @@
+{
+  "name": "AgentMail → CalDAV Auto-Schedule",
+  "nodes": [
+    {
+      "parameters": {
+        "trigger": "emailReceived",
+        "inboxId": null,
+        "filter": {}
+      },
+      "name": "AgentMail Trigger",
+      "type": "n8n-nodes-agentmail.n8n-nodes-agentmail-trigger",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "credentials": {
+        "agentMailApi": {
+          "id": "agentmail-credentials",
+          "name": "AgentMail API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8080/v1/chat/completions",
+        "method": "POST",
+        "authentication": "none",
+        "content": {
+          "model": "qwen2.5-3b-instruct-q4_0",
+          "messages": [
+            {
+              "role": "system",
+              "content": "You are a scheduling assistant for a personal AI agent. Extract calendar event details from the email text. Return ONLY valid JSON with fields: summary (event title), start (ISO date), end (ISO date), attendees (array of email strings), and location (optional). If no event can be scheduled, set summary to 'NO_EVENT' and include a reason field. Example: {\"summary\": \"Team Meeting\", \"start\": \"2026-08-28T14:00:00Z\", \"end\": \"2026-08-28T15:00:00Z\", \"attendees\": [\"john@example.com\"], \"location\": \"Zoom\"}"
+            },
+            {
+              "role": "user",
+              "content": "Email from: {{{ $json.from.email }}} ({{ $json.from.name }})\nSubject: {{ $json.subject }}\nBody: {{{ $json.text || $json.html }}}\n\nExtract calendar event details from this email, if any."
+            }
+          ],
+          "max_tokens": 1000,
+          "temperature": 0.3
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "options": {}
+      },
+      "name": "LLM — Extract Event Intent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('LLM — Extract Event Intent').response.json().choices[0].message.content }}",
+              "operation": "contains",
+              "value2": "NO_EVENT"
+            }
+          ]
+        },
+        "combine": "any"
+      },
+      "name": "IF — Event Detected?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [750, 300]
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "operation": "create",
+        "baseUrl": "http://nextcloud:8090/remote.php/dav/",
+        "username": "malicehermes@agentmail.to",
+        "password": "",
+        "calendarId": "AgentMail",
+        "summary": "={{ JSON.parse($('LLM — Extract Event Intent').response.json().choices[0].message.content).summary }}",
+        "dtstart": "={{ JSON.parse($('LLM — Extract Event Intent').response.json().choices[0].message.content).start }}",
+        "dtend": "={{ JSON.parse($('LLM — Extract Event Intent').response.json().choices[0].message.content).end }}",
+        "attendees": "={{ JSON.parse($('LLM — Extract Event Intent').response.json().choices[0].message.content).attendees?.join(\",\") || '' }}",
+        "location": "={{ JSON.parse($('LLM — Extract Event Intent').response.json().choices[0].message.content).location || '' }}"
+      },
+      "name": "Nextcloud — Create Calendar Event",
+      "type": "n8n-nodes-base.cal",
+      "typeVersion": 2,
+      "position": [1000, 300],
+      "credentials": {
+        "nextcloudCaldav": {
+          "id": "nextcloud-caldav-credentials",
+          "name": "Nextcloud CalDAV"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $json.inbox.email_address }}",
+        "toEmail": "={{ $json.from.email }}",
+        "subject": "Re: {{ $json.subject }}",
+        "text": "Your event has been scheduled:\n\nSummary: {{ JSON.parse($('LLM — Extract Event Intent').response.json().choices[0].message.content).summary }}\nWhen: {{ JSON.parse($('LLM — Extract Event Intent').response.json().choices[0].message.content).start }} to {{ JSON.parse($('LLM — Extract Event Intent').response.json().choices[0].message.content).end }}\nLocation: {{ JSON.parse($('LLM — Extract Event Intent').response.json().choices[0].message.content).location || 'TBD' }}\n\nThe event has been added to your Nextcloud calendar.",
+        "inboxId": "={{ $json.inbox_id || $json.inbox?.inbox_id }}"
+      },
+      "name": "AgentMail — Send Confirmation",
+      "type": "n8n-nodes-agentmail.n8n-nodes-agentmail",
+      "typeVersion": 1,
+      "position": [1250, 300],
+      "credentials": {
+        "agentMailApi": {
+          "id": "agentmail-credentials",
+          "name": "AgentMail API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "fromEmail": "={{ $json.inbox.email_address }}",
+        "toEmail": "={{ $json.from.email }}",
+        "subject": "Re: {{ $json.subject }}",
+        "text": "I couldn't detect a calendar event in your email. Could you please rephrase with specific date and time details? For example: \"Schedule a meeting with John tomorrow at 2 PM\"."
+      },
+      "name": "AgentMail — No Event Reply",
+      "type": "n8n-nodes-agentmail.n8n-nodes-agentmail",
+      "typeVersion": 1,
+      "position": [1000, 150],
+      "credentials": {
+        "agentMailApi": {
+          "id": "agentmail-credentials",
+          "name": "AgentMail API Key"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "AgentMail Trigger": {
+      "main": [
+        [
+          {
+            "node": "LLM — Extract Event Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM — Extract Event Intent": {
+      "main": [
+        [
+          {
+            "node": "IF — Event Detected?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Event Detected?": {
+      "main": [
+        [
+          {
+            "node": "Nextcloud — Create Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AgentMail — No Event Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nextcloud — Create Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "AgentMail — Send Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "saveManualExecutions": true,
+    "executionTimeout": 120
+  },
+  "versionId": "1",
+  "meta": {
+    "instanceId": "symbiote-os-workflow"
+  }
+}
