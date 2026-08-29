@@ -164,7 +164,7 @@ symbiote-os/
 ├── start.sh                    # Start orchestrator + frontend
 ├── stop.sh                     # Stop all services
 ├── AGENTS.md                   # Project guide for Copilot/Hermes/Codex
-├── docker-compose.yml          # Docker stack (Caddy, n8n, Nextcloud, MariaDB)
+| docker-compose.yml          | Docker stack (Caddy, n8n, Nextcloud, MariaDB, OnlyOffice) |
 ├── .env                        # Environment file (NOT committed to git)
 ├── frontend/                   # React + Vite + Tailwind UI
 │   ├── App.jsx                 # Main app (Hive/Carnage/Phage/Roadmap tabs)
@@ -197,6 +197,7 @@ symbiote-os/
 | Caddy (reverse proxy) | http://localhost:80 |
 | n8n (workflow engine) | http://localhost:5678 |
 | Nextcloud | http://localhost:8090 |
+| OnlyOffice | http://localhost:8083 |
 | MariaDB | localhost:3306 (Docker network) |
 | Tor SOCKS | localhost:9050 |
 | Tor Onion | onion address hidden (security) |
