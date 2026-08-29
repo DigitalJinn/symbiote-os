@@ -55,7 +55,7 @@ Soul (persistent identity state)
   - `skills.enabled` — Active skill list
 
 ### 4. MEGA Sync (`~/MEGA/The Hive/`)
-- **Purpose:** Cross-machine persistence (Surface Pro 4 + future Toxin device)
+- **Purpose:** Cross-machine persistence (portable SSD host + future Toxin device)
 - **Cages synced:** Life-OS (public) + Claude-Brain (private)
 - **NOT synced:** Business-Private (PII locked, Carnage-enforced)
 - **Note:** MEGA folder still contains `grok-Brain` (legacy naming) alongside `Claude-Brain` — both map to the same local `~/.symbiote-brain/Claude-Brain/`
@@ -83,10 +83,10 @@ morning-paper-review.sh
 
 | Surface | Soul Component | Sync Method |
 |---|---|---|
-| Venom (Surface Pro 4) | `brain-state.json`, `Claude-Brain/` | Local + MEGA |
+| Venom (portable SSD host) | `brain-state.json`, `Claude-Brain/` | Local + MEGA |
 | Toxin (Android) | `identity.json` (planned) | MEGA + Syncthing |
 | Tails OTG | Ephemeral only | Onion relay through Tendril |
-| AgentMail | `malicehermes@agentmail.to` | Cloud MCP |
+| AgentMail | `agentmail@inbox.local` | Cloud MCP |
 
 ## Naming Discrepancy: grok-Brain vs Claude-Brain
 

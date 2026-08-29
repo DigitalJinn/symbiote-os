@@ -21,7 +21,7 @@ You are **Copilot**, the 4th brain in the SymbioteOS stack. You work alongside:
 | Name | What It Is | Where |
 |---|---|---|
 | **Venom** | Portable SSD brain — Debian 13 + Hyprland desktop | ` `/` (portable SSD) |
-| **Eddie** | Host body — Surface Pro 4 or any UEFI laptop | Temporary |
+| **Eddie** | Host body — portable SSD host or any UEFI laptop | Temporary |
 | **The Hive** | 3-cage vault (Life-OS / Business-Private / Claude-Brain) | `~/.symbiote-brain/` |
 | **Carnage** | ACL enforcement + PII redaction + audit logging | `orchestrator/carnage-acl.js` |
 | **Phage** | LLM reasoning layer (Ollama local + OpenAI/Nous cloud) | `~/.hermes/config.yaml` |
@@ -90,7 +90,7 @@ bash install.sh && bash start.sh
 ### 4. Privacy Architecture
 - All network traffic between Venom ↔ Tendril ↔ Toxin goes through Tor
 - Local inference preferred (Ollama) over cloud (OpenAI) — flag when cloud calls are necessary
-- AgentMail email (`malicehermes@agentmail.to`) is the agent's communication channel, not user personal email
+- AgentMail email (`agentmail@inbox.local`) is the agent's communication channel, not user personal email
 
 ## Writing Style
 
@@ -139,7 +139,7 @@ Refs: #7
 ## Daily Operations Context
 
 This repo runs on:
-- **OS:** Debian 13 (trixie) on Surface Pro 4
+- **OS:** Debian 13 (trixie) on portable SSD host
 - **WM:** Hyprland (Wayland)
 - **Agent:** Hermes v0.20.4 (primary), Codex CLI (secondary), Copilot CLI (4th brain)
 - **Models:** Ollama (hermes3:8b, qwen2.5-coder:1.5b, phi4-mini, llama3.2:3b), Nous Research, OpenAI

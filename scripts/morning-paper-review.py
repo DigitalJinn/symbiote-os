@@ -213,8 +213,8 @@ Next review: Tomorrow at 9:00 AM
 #SymbioteOS #Agentmail #DailyReview"""
 
     digest = {
-        'inboxId': 'malicehermes@agentmail.to',
-        'to': 'malicehermes@agentmail.to',
+        'inboxId': 'agentmail@inbox.local',
+        'to': 'agentmail@inbox.local',
         'subject': f'SymbioteOS Daily Paper Digest — {date_str}',
         'body': body
     }
@@ -266,9 +266,9 @@ def send_digest_via_agentmail(digest):
             import urllib.request
             import urllib.error
             
-            url = "https://api.agentmail.to/v1/inboxes/malicehermes@agentmail.to/drafts"
+            url = "https://api.agentmail.to/v1/inboxes/agentmail@inbox.local/drafts"
             req_data = json.dumps({
-                "to": "malicehermes@agentmail.to",
+                "to": "agentmail@inbox.local",
                 "subject": digest['subject'],
                 "body": digest['body']
             }).encode('utf-8')
@@ -290,7 +290,7 @@ def send_digest_via_agentmail(digest):
                 # Send the draft
                 draft_id = result.get('id')
                 if draft_id:
-                    send_url = f"https://api.agentmail.to/v1/inboxes/malicehermes@agentmail.to/drafts/{draft_id}/send"
+                    send_url = f"https://api.agentmail.to/v1/inboxes/agentmail@inbox.local/drafts/{draft_id}/send"
                     send_req = urllib.request.Request(send_url, method="POST", headers={
                         "Authorization": f"Bearer {AGENTMAIL_API_KEY}",
                         "Content-Type": "application/json"

@@ -56,7 +56,7 @@ services:
       - MYSQL_HOST=db
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-ChangeMeNextcloud123!}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-«MYSQL_PASSWORD_PLACEHOLDER»}
       - TRUSTED_DOMAINS=localhost 127.0.0.1
     volumes:
       - ./config/nextcloud_data:/var/www/html
@@ -73,8 +73,8 @@ services:
     restart: unless-stopped
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-format=Barracuda
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-ChangeMeRoot123!}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-ChangeMeNextcloud123!}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-«MYSQL_ROOT_PASSWORD_PLACEHOLDER»}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-«MYSQL_PASSWORD_PLACEHOLDER»}
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
     volumes:
@@ -91,7 +91,7 @@ services:
     ports:
       - "127.0.0.1:8083:80"
     environment:
-      - JWT_SECRET=${ONLYOFFICE_JWT_SECRET:-symbiote_onlyoffice_secret}
+      - JWT_SECRET=${ONLYOFFICE_JWT_SECRET:-«JWT_SECRET_PLACEHOLDER»}
       - JWT_ENABLED=true
     volumes:
       - ./config/onlyoffice_data:/var/www/data

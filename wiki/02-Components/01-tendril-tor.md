@@ -77,7 +77,7 @@ sudo umount /mnt/persist
 ```
 
 ### Usage
-1. Insert USB into Surface Pro 4 via USB-C OTG adapter
+1. Insert USB into portable SSD host via USB-C OTG adapter
 2. Boot Tails (hold Volume Up + tap Power)
 3. Unlock persistence (set passphrase on first boot)
 4. Everything persists across sessions, encrypted on-device

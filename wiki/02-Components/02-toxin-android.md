@@ -18,7 +18,7 @@
 | **Android SDK** | `~/Android/Sdk/` | platform-tools 37.0.1, build-tools 34.0.0 |
 | **AVD (microG)** | `~/.android/avd/Toxin-microG-API34.avd` | Android 14, x86_64, AOSP (clean, no Google stubs) |
 | **AVD (Google APIs)** | `~/.android/avd/Toxin-Pixel4XL-API34.avd` | Android 14, x86_64, google_apis |
-| **KVM accel** | `/dev/kvm` | ✅ Active on Surface Pro 4 |
+| **KVM accel** | `/dev/kvm` | ✅ Active on portable SSD host |
 - ⏳ **Android device** (LineageOS + microG recommended)
 - ⏳ **TWRP recovery** for ROM flashing (if needed)
 

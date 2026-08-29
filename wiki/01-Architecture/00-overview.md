@@ -5,7 +5,7 @@ Symbiote-OS is a portable, privacy-first agentic operating system that runs from
 
 ```
 ┌─────────────────────────────┐
-│   Surface Pro 4 (Eddie)     │
+│   portable SSD host (Eddie)     │
 │  ┌───────────────────────┐  │
 │  │ Venom (SSD)           │  │  Debian 13 + Hyprland
 │  │ • Orchestrator :3030  │  │  Hermes, Codex, Ollama
@@ -35,7 +35,7 @@ Symbiote-OS is a portable, privacy-first agentic operating system that runs from
 - Ephemeral — the SSD is the "brain" you carry
 
 ### Eddie (Host Body)
-- Temporary machine (Surface Pro 4) used to boot Venom
+- Temporary machine (portable SSD host) used to boot Venom
 - Leaves no persistent traces after shutdown
 
 ### The Hive (Vault)

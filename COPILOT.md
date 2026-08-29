@@ -8,7 +8,7 @@
 | Name | Role | Path |
 |---|---|---|
 | **Venom** | Portable SSD brain (Debian 13 + Hyprland) | `/` portable SSD |
-| **Eddie** | Host body (Surface Pro 4) | Temporary |
+| **Eddie** | Host body (portable SSD host) | Temporary |
 | **Hive** | 3-cage vault (Life-OS, Business-Private, Claude-Brain) | `~/.symbiote-brain/` |
 | **Carnage** | ACL + PII redaction + audit logging | `orchestrator/carnage-acl.js` |
 | **Phage** | LLM layer (Ollama local + OpenAI/Nous cloud) | `~/.hermes/config.yaml` |

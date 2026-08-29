@@ -4,7 +4,7 @@
 
 ## Session 1 — Initial Setup
 **Date:** 2026-08-19  
-**Location:** Surface Pro 4 (Debian 13, kernel 6.19.8-surface-3)
+**Location:** portable SSD host (Debian 13, kernel 6.19.x)
 
 ### What was done
 - Set up Hermes Agent (v0.20.4)
@@ -41,11 +41,11 @@
 
 ## Session 2 — Wiki + AgentMail + Proton Drive
 **Date:** 2026-08-20
-**Location:** Surface Pro 4 (Debian 13, kernel 6.19.8-surface-3)
+**Location:** portable SSD host (Debian 13, kernel 6.19.x)
 
 ### What was done
 - Created comprehensive Symbiote-OS Wiki (13 markdown files in `~/MEGA/Symbiote OS Wiki/`)
-- Set up AgentMail MCP server (agentmail-mcp@1.0.2, inbox: malicehermes@agentmail.to)
+- Set up AgentMail MCP server (agentmail-mcp@1.0.2, inbox: agentmail@inbox.local)
 - Checked inbox: 10 unread threads, Substack verification code = `339456`
 - Documented Proton Drive setup requirements (pending manual install)
 - Updated Substack draft: "Claude Code" → "OpenAI Codex"
@@ -55,5 +55,5 @@
 - Proton doesn't offer a standalone Linux Drive client (only bundled in Mail Desktop AppImage)
 - The `hermes` system user (uid 996) was not created by the agent — user ran `sudo useradd` manually
 - AgentMail provides agent-owned email (3 inboxes, 3k emails/month free tier)
-- The @uncannyblacc Substack (vs @mallic3 GeekzNThingz) has 8 published posts as of Aug 17
+- The @[REDACTED_SOCIAL] Substack (vs @[REDACTED_SOCIAL] GeekzNThingz) has 8 published posts as of Aug 17
 - Wiki is MEGA-synced so it's available on all devices

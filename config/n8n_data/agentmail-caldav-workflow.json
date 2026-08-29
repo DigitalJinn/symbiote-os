@@ -71,7 +71,7 @@
         "resource": "calendar",
         "operation": "create",
         "baseUrl": "http://nextcloud:8090/remote.php/dav/",
-        "username": "malicehermes@agentmail.to",
+        "username": "agentmail@inbox.local",
         "password": "",
         "calendarId": "AgentMail",
         "summary": "={{ JSON.parse($('LLM — Extract Event Intent').response.json().choices[0].message.content).summary }}",

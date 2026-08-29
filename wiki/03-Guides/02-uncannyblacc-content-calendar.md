@@ -85,7 +85,7 @@
 
 > **⚠️ Delayed by 1 week** — Helen of Troy moved from Aug 16→23, all subsequent arcs shifted +7 days.
 
-> **Note:** Arc 9 (Marie Laveau) was previously published on @mallic3/GeekzNThingz tagged as "The Charmer." Consider whether to re-publish on @uncannyblacc as "The Charismatic" or cross-reference.
+> **Note:** Arc 9 (Marie Laveau) was previously published on @[REDACTED_SOCIAL]/GeekzNThingz tagged as "The Charmer." Consider whether to re-publish on @[REDACTED_SOCIAL] as "The Charismatic" or cross-reference.
 
 ## Writing Prompts Bank
 - [ ] What does it cost to be the person everyone calls "strong"?

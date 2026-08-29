@@ -1,5 +1,5 @@
 #!/bin/bash
-# Symbiote-OS startup for Venom (Debian 13 + Surface Pro 4)
+# Symbiote-OS startup for Venom (Debian 13 + portable SSD host)
 # Venom Revamp: Docker stack + llama.cpp systemd service
 # Note: Docker Compose v2 plugin not available; using individual docker run commands
 

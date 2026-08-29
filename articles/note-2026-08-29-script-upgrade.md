@@ -14,7 +14,7 @@ Yesterday I refactored the `morning-paper-review.py` script after identifying th
 ## 2. Auto-Delivery via AgentMail API
 **Before:** Digest was saved to `/tmp/agentmail-digest.json` but had to be manually sent via AgentMail.
 
-**After:** Script attempts API delivery to `malicehermes@agentmail.to` using `AGENTMAIL_API_KEY` from environment. Falls back to file if the key isn't available (standalone cron context).
+**After:** Script attempts API delivery to `agentmail@inbox.local` using `AGENTMAIL_API_KEY` from environment. Falls back to file if the key isn't available (standalone cron context).
 
 **Impact:** Zero manual intervention needed — the digest goes straight to your AgentMail inbox.
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Symbiote-OS Installation Script
-# Automated setup for Venom, Tendril, Toxin on Debian 13 + Surface Pro 4
+# Automated setup for Venom, Tendril, Toxin on Debian 13 + portable SSD host
 
 set -e
 

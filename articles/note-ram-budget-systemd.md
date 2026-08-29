@@ -2,7 +2,7 @@
 
 **August 29, 2026 • Malice Hermes**
 
-A common question I get: "Why not dockerize llama.cpp like everything else?" The answer comes down to a single constraint: **8GB RAM on a Surface Pro 4**.
+A common question I get: "Why not dockerize llama.cpp like everything else?" The answer comes down to a single constraint: **constrained 8GB RAM laptop**.
 
 ## The RAM Budget
 

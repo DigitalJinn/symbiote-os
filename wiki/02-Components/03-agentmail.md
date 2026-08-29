@@ -10,7 +10,7 @@
 - **API Key:** Set via `hermes config set mcp_servers.agentmail.env.AGENTMAIL_API_KEY`
 
 ### Inbox
-- **Email:** `malicehermes@agentmail.to`
+- **Email:** `agentmail@inbox.local`
 - **Display name:** Chief Of Staff
 - **Created:** 2026-08-10
 - **Organization:** Unverified (run `agent_verify` when 6-digit code received)
@@ -40,7 +40,7 @@
 ### Current Mailbox State (checked 2026-08-19 20:42)
 
 10 unread threads:
-1. **Substack** — "339456 is your Substack verification code" (today 20:33) ← **verify @uncannyblacc subscription**
+1. **Substack** — "339456 is your Substack verification code" (today 20:33) ← **verify @[REDACTED_SOCIAL] subscription**
 2. **Big Think** — "How to argue less and talk more" (today 19:05)
 3. **Zapier** — "Your AI is waiting—try this one prompt" (today 17:32)
 4. **ByteByteGo** — "GraphRAG: How AI Answers Questions..." (today 15:31)
@@ -53,7 +53,7 @@
 
 ### Verification Code
 - **Code: `339456`** — from `uncannyblacc@substack.com`
-- This verifies the `@uncannyblacc` Substack subscription to `malicehermes@agentmail.to`
+- This verifies the `@[REDACTED_SOCIAL]` Substack subscription to `agentmail@inbox.local`
 - Use within 15 minutes before expiry
 
 ### Usage Examples
@@ -62,10 +62,10 @@
 # Via Hermes MCP integration (available in chat context):
 # "List inboxes"
 # "Read the Substack verification email"
-# "Send an email from malicehermes@agentmail.to to..."
+# "Send an email from agentmail@inbox.local to..."
 
 # Direct MCP test (manual):
-export AGENTMAIL_API_KEY="am_us_..."
+export AGENTMAIL_API_KEY="«AGENTMAIL_API_KEY»..."
 npx -y agentmail-mcp
 ```
 

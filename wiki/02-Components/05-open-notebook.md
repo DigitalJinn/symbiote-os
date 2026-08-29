@@ -8,7 +8,7 @@
 ### Architecture
 ```
 ┌─────────────────────────────────────────────┐
-│  Surface Pro 4 (Venom SSD)                   │
+│  portable SSD host (Venom SSD)                   │
 │                                              │
 │  ┌────────────┐  ┌──────────┐  ┌──────────┐ │
 │  │  Frontend   │  │  Backend  │  │ SurrealDB│ │

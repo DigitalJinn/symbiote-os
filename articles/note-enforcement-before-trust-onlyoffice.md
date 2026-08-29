@@ -34,7 +34,7 @@ OnlyOffice editor         →  Trusts: that the above layers are correct
 The editor itself doesn't need to be "smart" about security. It trusts that the layers beneath it have enforced the boundaries correctly. This is the opposite of putting security in every application layer.
 
 ## Why This Matters
-On a Surface Pro 4 with 8GB RAM running a dozen services, you can't afford to trust every component. You must enforce boundaries at the system level:
+On a portable SSD host with 8GB RAM running a dozen services, you can't afford to trust every component. You must enforce boundaries at the system level:
 
 - **Firewall**: Caddy on localhost only
 - **Container isolation**: Docker network for inter-service calls

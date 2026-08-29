@@ -3,7 +3,7 @@
 > Phase 1–3 setup instructions
 
 ## Prerequisites
-- Surface Pro 4 (or any UEFI laptop)
+- portable SSD host (or any UEFI laptop)
 - USB SSD (500GB+ recommended)
 - Ventoy USB (for OS installation media)
 - Internet connection
