@@ -1,9 +1,6 @@
 # Caddyfile — hardened reverse proxy for Symbiote-OS
 # All services bound to 127.0.0.1 only
 
-# Global security headers
-# (applied automatically by Caddy)
-
 # Reverse proxy routes
 :80 {
     # Security headers
@@ -25,8 +22,23 @@
     # n8n
     reverse_proxy /n8n/* n8n:5678
 
-    # Nextcloud
-    reverse_proxy /nc/* nextcloud:80
+    # Nextcloud — proxied at /nc/*
+    reverse_proxy /nc/* nextcloud:80 {
+        header_up Host              {http.reverse_proxy.upstream.hostport}
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Host  {host}
+        header_up X-Forwarded-For   {remote}
+        header_up X-Real-IP         {remote}
+    }
+
+    # OnlyOffice Document Server — direct access for editing
+    reverse_proxy /onlyoffice/* onlyoffice:80 {
+        header_up Host              {http.reverse_proxy.upstream.hostport}
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Host  {host}
+        header_up X-Forwarded-For   {remote}
+        header_up X-Real-IP         {remote}
+    }
 
     # Health check endpoint
     @health {

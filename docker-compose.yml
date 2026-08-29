@@ -81,3 +81,23 @@ services:
       - ./config/nextcloud_db/mysql:/var/lib/mysql
     networks:
       - symbiote_net
+
+  # OnlyOffice Document Server (integrates with Nextcloud)
+  # Provides web-based document editing, replacing LibreOffice
+  onlyoffice:
+    image: onlyoffice/documentserver:latest
+    container_name: onlyoffice
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8083:80"
+    environment:
+      - JWT_SECRET=${ONLYOFFICE_JWT_SECRET:-symbiote_onlyoffice_secret}
+      - JWT_ENABLED=true
+    volumes:
+      - ./config/onlyoffice_data:/var/www/data
+    networks:
+      - symbiote_net
+
+  # Planify is a DESKTOP app (GTK4) — no server needed.
+  # Install natively on Hyprland and sync with Nextcloud CalDAV.
+  # See: apt install planify-core OR flatpak install flathub io.github.alainm23.planify

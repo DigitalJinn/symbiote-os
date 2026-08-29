@@ -26,3 +26,11 @@ Thumbs.db
 # Wiki
 wiki/.obsidian/
 wiki/*.pdf
+config/n8n_data/
+config/nextcloud_data/
+config/nextcloud_db/
+config/caddy_data/
+config/caddy_config/
+config/onlyoffice_data/
+config/planify_data/
+config/planify_db/
