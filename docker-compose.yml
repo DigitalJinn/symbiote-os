@@ -1,11 +1,6 @@
 version: '3.8'
 
-networks:
-  symbiote_net:
-    driver: bridge
-
 services:
-  # Zero-Overhead Edge Router
   caddy:
     image: caddy:2-alpine
     container_name: caddy
@@ -21,7 +16,6 @@ services:
       - symbiote_net
     command: caddy run --config /etc/caddy/Caddyfile
 
-  # AI Agent Workflow Engine
   n8n:
     image: n8nio/n8n:latest
     container_name: n8n
@@ -45,7 +39,6 @@ services:
     depends_on:
       - caddy
 
-  # Self-Hosted Cloud (Storage + Calendar)
   nextcloud:
     image: nextcloud:28-apache
     container_name: nextcloud
@@ -56,8 +49,12 @@ services:
       - MYSQL_HOST=db
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-«MYSQL_PASSWORD_PLACEHOLDER»}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-change-me}
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER:-admin}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD:-change-me}
       - TRUSTED_DOMAINS=localhost 127.0.0.1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     volumes:
       - ./config/nextcloud_data:/var/www/html
       - ./workspace:/var/www/html/workspace
@@ -65,16 +62,16 @@ services:
       - symbiote_net
     depends_on:
       - db
+      - redis
 
-  # Database for Nextcloud
   db:
     image: mariadb:11
     container_name: nextcloud_db
     restart: unless-stopped
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-format=Barracuda
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-«MYSQL_ROOT_PASSWORD_PLACEHOLDER»}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-«MYSQL_PASSWORD_PLACEHOLDER»}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-change-me}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-change-me}
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
     volumes:
@@ -82,22 +79,104 @@ services:
     networks:
       - symbiote_net
 
-  # OnlyOffice Document Server (integrates with Nextcloud)
-  # Provides web-based document editing, replacing LibreOffice
-  onlyoffice:
-    image: onlyoffice/documentserver:latest
-    container_name: onlyoffice
+  redis:
+    image: redis:7-alpine
+    container_name: symbiote_redis
+    restart: unless-stopped
+    networks:
+      - symbiote_net
+    command: redis-server --appendonly yes
+
+  collabora:
+    image: collabora/code:latest
+    container_name: collabora
     restart: unless-stopped
     ports:
-      - "127.0.0.1:8083:80"
+      - "127.0.0.1:9980:9980"
     environment:
-      - JWT_SECRET=${ONLYOFFICE_JWT_SECRET:-«JWT_SECRET_PLACEHOLDER»}
-      - JWT_ENABLED=true
-    volumes:
-      - ./config/onlyoffice_data:/var/www/data
+      - ALIASGROUP1=https://localhost
+      - DONT_GEN_SSL_CERT=true
+      - server_name=collabora.local
+    cap_add:
+      - MKNOD
+    mem_limit: 512m
     networks:
       - symbiote_net
 
-  # Planify is a DESKTOP app (GTK4) — no server needed.
-  # Install natively on Hyprland and sync with Nextcloud CalDAV.
-  # See: apt install planify-core OR flatpak install flathub io.github.alainm23.planify
+  appflowy:
+    image: appflowy/appflowy:latest
+    container_name: appflowy
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      - FLUTTER_TARGET=web
+      - APPFLOWY_MODE=production
+    volumes:
+      - ./config/appflowy:/home/appflowy
+    mem_limit: 1g
+    networks:
+      - symbiote_net
+
+  affine:
+    image: ghcr.io/toeverything/affine:latest
+    container_name: affine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3010:3010"
+    environment:
+      - DATABASE_URL=postgresql://affine:${AFFINE_DB_PASSWORD:-change-me}@postgres_affine:5432/affine
+      - AFFINE_SERVER_HOST=0.0.0.0
+      - AFFINE_SERVER_PORT=3010
+    depends_on:
+      - postgres_affine
+    volumes:
+      - ./config/affine:/app/storage
+    mem_limit: 1g
+    networks:
+      - symbiote_net
+
+  postgres_affine:
+    image: postgres:15-alpine
+    container_name: postgres_affine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=affine
+      - POSTGRES_USER=affine
+      - POSTGRES_PASSWORD=${AFFINE_DB_PASSWORD:-change-me}
+    volumes:
+      - ./config/postgres_affine:/var/lib/postgresql/data
+    mem_limit: 512m
+    networks:
+      - symbiote_net
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11434:11434"
+    environment:
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_KEEP_ALIVE=5m
+    volumes:
+      - ./config/ollama:/root/.ollama
+    mem_limit: 7g
+    networks:
+      - symbiote_net
+
+  tor:
+    image: osminogin/tor-simple:latest
+    container_name: tendril_tor
+    restart: unless-stopped
+    ports:
+      - "9050:9050"
+      - "9051:9051"
+    volumes:
+      - ./config/tor:/var/lib/tor
+    networks:
+      - symbiote_net
+
+networks:
+  symbiote_net:
+    driver: bridge
